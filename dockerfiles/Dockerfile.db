@@ -1,0 +1,14 @@
+FROM postgres:11-alpine
+
+RUN apk update
+
+RUN apk add --no-cache git \
+    --repository https://alpine.global.ssl.fastly.net/alpine/v3.10/community \
+    --repository https://alpine.global.ssl.fastly.net/alpine/v3.10/main 
+         
+RUN git clone https://github.com/prefeiturasp/SME-NovoSGP.git /opt/sgp-backend \ 
+    && cp -r /opt/sgp-backend/scripts /opt/scripts
+
+COPY /scripts/postgres/sgp-populate /opt/scripts
+
+CMD ["postgres"]
