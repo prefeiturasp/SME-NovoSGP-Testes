@@ -1,0 +1,191 @@
+version: "3.1"
+
+volumes:
+  scripts: {}
+
+services:
+  sme-postgres:
+    container_name: sme-postgres-testes
+    restart: always
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./scripts/postgres/init:/docker-entrypoint-initdb.d/:Z
+      - scripts:/opt/scripts:Z
+    networks:
+      - sme-network
+  sme-flyway:
+    container_name: sme-flyway-testes
+    restart: on-failure:5
+    image: boxfuse/flyway:5.2.4
+    command: -url=jdbc:postgresql://sme-postgres-testes:5432/sgp_db?user=postgres&password=postgres -locations='filesystem:/opt/scripts' -baselineOnMigrate=true -outOfOrder=true migrate
+    volumes:
+      - scripts:/opt/scripts
+    depends_on:
+      - sme-postgres
+    networks:
+      - sme-network
+  sme-rabbitmq:
+    container_name: sme-rabbitmq-testes
+    image: rabbitmq:3.7-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=bitnami
+    ports:
+      - "5672:5672"
+      - "15672:15672"    
+    networks:
+      - sme-network
+  sme-mssql:
+    container_name: sme-mssql-testes
+    restart: always
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: SME@2021
+      MSSQL_PID: Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./scripts/mssql:/scripts/
+    networks:
+      - sme-network
+    command:
+      - /bin/bash
+      - -c
+      - |
+        # Launch MSSQL and send to background
+        /opt/mssql/bin/sqlservr &
+        # Wait 30 seconds for it to be available
+        # (lame, I know, but there's no nc available to start prodding network ports)
+        sleep 30
+        # Run every script in /scripts
+        # TODO set a flag so that this is only done once on creation, 
+        #      and not every time the container runs
+        for foo in /scripts/*.sql
+          do /opt/mssql-tools/bin/sqlcmd -U sa -P $$SA_PASSWORD -l 30 -e -i $$foo
+        done
+        # So that the container doesn't shut down, sleep this thread
+        sleep infinity
+  sme-worker-rabbit:
+    container_name: sme-worker-rabbit-testes
+    image: registry.sme.prefeitura.sp.gov.br/sgp/sme-worker-rabbit:dev
+    restart: on-failure:10
+    ports:
+      - '5001:80'
+    networks:
+      - sme-network
+    depends_on:
+      - 'sme-postgres'
+      - 'sme-rabbitmq'
+    env_file:
+      - sme-api.env
+  sme-worker-service:
+    container_name: sme-worker-service-testes
+    image: registry.sme.prefeitura.sp.gov.br/sgp/sme-workerservice:dev
+    restart: on-failure:10
+    ports:
+      - '5002:80'
+    networks:
+      - sme-network
+    depends_on:
+      - 'sme-postgres'
+      - 'sme-mssql'
+      - 'sme-worker-rabbit'
+    env_file:
+      - sme-api.env
+  sme-apieol-worker:
+    container_name: sme-apieol-worker-testes
+    image: registry.sme.prefeitura.sp.gov.br/sgp/sme-pedagogico-worker:dev
+    restart: on-failure:10
+    ports:
+      - '5004:80'
+    networks:
+      - sme-network
+    depends_on:
+      - 'sme-postgres'
+      - 'sme-mssql'
+      - 'sme-worker-rabbit'
+    env_file:
+      - sme-api.env
+  sme-api-eol:
+    container_name: sme-apieol-testes
+    image: registry.sme.prefeitura.sp.gov.br/sgp/sme-pedagogicowebapi-backend:dev
+    restart: on-failure:10
+    ports:
+      - '5003:80'
+    networks:
+      - sme-network
+    depends_on:
+      - 'sme-postgres'
+      - 'sme-mssql'
+      - 'sme-worker-rabbit'
+    env_file:
+      - sme-api.env
+  sme-api:
+    container_name: sme-api-testes
+    image: registry.sme.prefeitura.sp.gov.br/sgp/sme-sgp-backend:dev
+    restart: on-failure:10
+    ports:
+      - '5000:80'
+    networks:
+      - sme-network
+    depends_on:
+      - 'sme-postgres'
+      - 'sme-rabbitmq'
+      - 'sme-worker-rabbit'
+    env_file:
+      - sme-api.env
+  sme-webclient:
+    container_name: sme-webclient-testes
+    image: registry.sme.prefeitura.sp.gov.br/sgp/sme-sgp-webclient:dev
+    ports:
+      - '80:80'
+    networks:
+      - sme-network
+    depends_on:
+      - 'sme-api'
+    environment:
+      - API_URL=http://localhost:5000/api
+
+  
+  # sme-workerservice:
+  #   container_name: sme-workerservice-testes
+  #   image: sme-workerservice-testes
+  #   build:
+  #     context: .
+  #     dockerfile: ./src/SME.SGP.WorkerService/Dockerfile
+  #   ports:
+  #     - '5000:5000'
+  #   networks:
+  #     - sme-network
+  #   depends_on:
+  #     - 'sme-postgres'
+  #     - 'sme-api'
+  #   env_file:
+  #     - sme-api.env      
+  # sme-webclient:
+  #   container_name: sme-webclient-testes
+  #   image: sme-webclient-testes
+  #   build:
+  #     context: .
+  #     dockerfile: ./src/SME.SGP.WebClient/Dockerfile
+  #   ports:
+  #     - '80:80'
+  #   networks:
+  #     - sme-network
+  #   depends_on:
+  #     - 'sme-api'
+  #   environment:
+  #     - API_URL=http://localhost:8080/api
+
+networks:
+  sme-network:
+    driver: bridge
+    name: sme_external_network
