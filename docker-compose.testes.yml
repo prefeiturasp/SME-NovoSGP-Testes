@@ -39,9 +39,9 @@ services:
       - RABBITMQ_DEFAULT_PASS=bitnami
     ports:
       - "5672:5672"
-      - "15672:15672"    
+      - "15672:15672"
     networks:
-      - sme-network
+      - sme-network    
   sme-mssql:
     container_name: sme-mssql-testes
     restart: always
@@ -79,112 +79,94 @@ services:
     restart: on-failure:10
     ports:
       - '5001:80'
-    networks:
-      - sme-network
     depends_on:
       - 'sme-postgres'
       - 'sme-rabbitmq'
     env_file:
       - sme-api.env
+    networks:
+      - sme-network
   sme-worker-service:
     container_name: sme-worker-service-testes
     image: registry.sme.prefeitura.sp.gov.br/sgp/sme-workerservice:dev
     restart: on-failure:10
     ports:
       - '5002:80'
-    networks:
-      - sme-network
     depends_on:
       - 'sme-postgres'
       - 'sme-mssql'
       - 'sme-worker-rabbit'
     env_file:
       - sme-api.env
+    networks:
+      - sme-network
   sme-apieol-worker:
     container_name: sme-apieol-worker-testes
     image: registry.sme.prefeitura.sp.gov.br/sgp/sme-pedagogico-worker:dev
     restart: on-failure:10
     ports:
       - '5004:80'
-    networks:
-      - sme-network
     depends_on:
       - 'sme-postgres'
       - 'sme-mssql'
       - 'sme-worker-rabbit'
     env_file:
       - sme-api.env
+    networks:
+      - sme-network
   sme-api-eol:
     container_name: sme-apieol-testes
     image: registry.sme.prefeitura.sp.gov.br/sgp/sme-pedagogicowebapi-backend:dev
     restart: on-failure:10
     ports:
       - '5003:80'
-    networks:
-      - sme-network
     depends_on:
       - 'sme-postgres'
       - 'sme-mssql'
       - 'sme-worker-rabbit'
     env_file:
       - sme-api.env
+    networks:
+      - sme-network
   sme-api:
     container_name: sme-api-testes
     image: registry.sme.prefeitura.sp.gov.br/sgp/sme-sgp-backend:dev
     restart: on-failure:10
     ports:
       - '5000:80'
-    networks:
-      - sme-network
     depends_on:
-      - 'sme-postgres'
-      - 'sme-rabbitmq'
-      - 'sme-worker-rabbit'
+      - sme-postgres
+      - sme-rabbitmq
+      - sme-worker-rabbit
     env_file:
       - sme-api.env
+    networks:
+      - sme-network
   sme-webclient:
     container_name: sme-webclient-testes
     image: registry.sme.prefeitura.sp.gov.br/sgp/sme-sgp-webclient:dev
     ports:
-      - '80:80'
-    networks:
-      - sme-network
+      - '3000:80'
     depends_on:
       - 'sme-api'
     environment:
-      - API_URL=http://localhost:5000/api
-
-  
-  # sme-workerservice:
-  #   container_name: sme-workerservice-testes
-  #   image: sme-workerservice-testes
-  #   build:
-  #     context: .
-  #     dockerfile: ./src/SME.SGP.WorkerService/Dockerfile
-  #   ports:
-  #     - '5000:5000'
-  #   networks:
-  #     - sme-network
-  #   depends_on:
-  #     - 'sme-postgres'
-  #     - 'sme-api'
-  #   env_file:
-  #     - sme-api.env      
-  # sme-webclient:
-  #   container_name: sme-webclient-testes
-  #   image: sme-webclient-testes
-  #   build:
-  #     context: .
-  #     dockerfile: ./src/SME.SGP.WebClient/Dockerfile
-  #   ports:
-  #     - '80:80'
-  #   networks:
-  #     - sme-network
-  #   depends_on:
-  #     - 'sme-api'
-  #   environment:
-  #     - API_URL=http://localhost:8080/api
-
+      - API_URL=http://sme-api-testes/api
+    networks:
+      - sme-network
+  sme-robot:
+    container_name: sme-robot-testes
+    image: ppodgorsek/robot-framework
+    depends_on:
+      - 'sme-api'
+      - 'sme-webclient'
+      - 'sme-mssql'
+      - 'sme-rabbitmq'
+      - 'sme-api-eol'
+    networks:
+      - sme-network
+    volumes:
+      - ./testes/resultados:/opt/robotframework/reports:Z
+      - ./testes/scripts:/opt/robotframework/tests:Z
 networks:
   sme-network:
     driver: bridge
