@@ -1,0 +1,15 @@
+version: "3.1"
+
+services:
+  sme-flyway:
+    container_name: sme-flyway-testes
+    restart: on-failure:5
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.flyway
+    command: -url=jdbc:postgresql://sme-postgres-testes:5432/sgp_db?user=postgres&password=postgres -locations='filesystem:/opt/scripts' -baselineOnMigrate=true -outOfOrder=true migrate
+    networks:
+      - sme-network
+networks:
+  sme-network:
+    driver: bridge

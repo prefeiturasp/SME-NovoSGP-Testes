@@ -1,9 +1,5 @@
-#!/usr/bin/expect -f
-set dnpath [lindex $argv 0]
-set timeout -1
+#!/usr/bin/env bash
 
-spawn docker-compose -f docker-compose.testes.postgres.yml up
+chmod +x ./scripts/shell/run-docker.sh
+./scripts/shell/run-docker.sh
 
-expect "*system is ready to accept connections"
-
-INTERACT
