@@ -1,0 +1,20 @@
+version: "3.1"
+
+volumes:
+  scripts: {}
+
+services:
+  sme-robot:
+    container_name: sme-robot-testes
+    image: ppodgorsek/robot-framework:latest
+    environment:
+      - BROWSER=firefox
+      - TZ=America/Sao_Paulo
+    networks:
+      - sme-network
+    volumes:
+      - ./testes/resultados:/opt/robotframework/reports:Z
+      - ./testes/scripts:/opt/robotframework/tests:Z
+networks:
+  sme-network:
+    driver: bridge

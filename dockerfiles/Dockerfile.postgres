@@ -1,0 +1,7 @@
+FROM postgres:11-alpine
+
+COPY ./scripts-sgp /opt/scripts
+COPY ./scripts/postgres/sgp-populate /opt/scripts
+COPY ./scripts/postgres/init /docker-entrypoint-initdb.d
+
+CMD ["postgres"]

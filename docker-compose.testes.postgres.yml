@@ -1,0 +1,19 @@
+version: "3.1"
+
+services:
+  sme-postgres:
+    container_name: sme-postgres-testes
+    restart: always
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - sme-network
+networks:
+  sme-network:
+    driver: bridge

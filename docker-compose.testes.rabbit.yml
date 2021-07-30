@@ -1,0 +1,20 @@
+version: "3.1"
+
+volumes:
+  scripts: {}
+
+services:
+  sme-rabbitmq:
+    container_name: sme-rabbitmq-testes
+    image: rabbitmq:3.7-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=bitnami
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - sme-network    
+networks:
+  sme-network:
+    driver: bridge

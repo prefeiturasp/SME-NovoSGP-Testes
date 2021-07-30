@@ -1,0 +1,1 @@
+docker-compose -f docker-compose.testes.postgres.yml up --force-recreate

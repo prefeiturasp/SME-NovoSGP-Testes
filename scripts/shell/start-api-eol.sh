@@ -1,0 +1,1 @@
+docker-compose -f docker-compose.testes.api-eol.yml up --force-recreate

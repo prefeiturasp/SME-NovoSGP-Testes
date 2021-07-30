@@ -2,7 +2,7 @@
 Library  SeleniumLibrary
 
 *** Variables ***
-${URL_SGP}          http://sme-webclient-testes/
+${URL_SGP}          http://sme-webclient-testes:3000/
 ${BROWSER}      chrome
 ${INPUT_USUARIO}  id=usuario
 ${INPUT_SENHA}  id=senha
