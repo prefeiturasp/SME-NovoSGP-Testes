@@ -1,0 +1,1 @@
+docker-compose -f docker-compose.testes.sgp-flyway.yml up --force-recreate

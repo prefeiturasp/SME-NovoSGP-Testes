@@ -1,19 +1,22 @@
 FROM ubuntu:21.10
 
-ENV DEBIAN_FRONTEND=nonintercative 
+ENV REGISTRY_URL=url
+ENV REGISTRY_USER=user
+ENV REGISTRY_PASSWORD=password
+ENV DEBIAN_FRONTEND=noninteractive 
+ENV ACESSO_EXTERNO=false
+ENV RECRIAR_IMAGENS=true
 
 RUN apt-get update -y
 
 RUN apt install -y docker.io expect docker-compose git
 
-COPY docker-compose.testes.postgres.yml /app/
-COPY docker-compose.testes.flyway-sgp.yml /app/
-COPY docker-compose.testes.rabbit.yml /app/
-COPY docker-compose.testes.mssql.yml /app/
+COPY *.yml /app/
 
 COPY dockerfiles /app/dockerfiles
 COPY scripts /app/scripts
-COPY start.sh /app/
+COPY testes /app/testes
+COPY start.sh sme-api.env /app/
 
 RUN git clone https://github.com/prefeiturasp/SME-NovoSGP.git /app/sgp-backend \ 
     && cp -r /app/sgp-backend/scripts /app/scripts-sgp \
@@ -23,5 +26,6 @@ COPY /scripts/postgres/sgp-populate /app/scripts-sgp
 
 WORKDIR /app
 
-CMD ["/bin/bash", "-x", "start.sh"]
+# CMD ["/bin/bash", "-x", "start.sh"]
+ENTRYPOINT ["/bin/bash", "-x", "start.sh"] 
 

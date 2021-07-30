@@ -1,0 +1,1 @@
+docker-compose -f docker-compose.testes.sgp-worker-service.yml up --force-recreate

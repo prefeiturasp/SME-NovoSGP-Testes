@@ -1,0 +1,1 @@
+docker-compose -f docker-compose.testes.mssql.yml up --force-recreate

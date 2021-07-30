@@ -1,6 +1,3 @@
 FROM mcr.microsoft.com/mssql/server:2017-latest
 
 COPY ./scripts/mssql /scripts
-COPY ./scripts/shell /scripts-shell
-
-CMD ["/bin/bash", "+x", "./scripts-shell/mssql.sh"]

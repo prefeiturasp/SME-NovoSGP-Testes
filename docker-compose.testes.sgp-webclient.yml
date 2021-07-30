@@ -1,0 +1,18 @@
+version: "3.1"
+
+volumes:
+  scripts: {}
+
+services:
+  sme-sgp-webclient:
+    container_name: sme-sgp-webclient-testes
+    image: registry.sme.prefeitura.sp.gov.br/sgp/sme-sgp-webclient:dev
+    ports:
+      - '3000:80'
+    environment:
+      - API_URL=$SGP_URL
+    networks:
+      - sme-network
+networks:
+  sme-network:
+    driver: bridge

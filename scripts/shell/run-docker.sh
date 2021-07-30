@@ -2,21 +2,34 @@
 
 set timeout -1
 
-# spawn docker-compose -f docker-compose.testes.postgres.yml up --build -d 
-# expect "*done*"
+spawn ./scripts/shell/start-rabbit.sh
+expect "*rabbitmq_web_dispatch*"
 
-# spawn docker-compose -f docker-compose.testes.flyway-sgp.yml up --build -d 
-# expect "*done*"
+spawn ./scripts/shell/start-postgres.sh
+expect "*database system is ready to accept connections*"
 
-# spawn docker-compose -f docker-compose.testes.rabbit.yml up -d
-# expect "*done*"
+spawn ./scripts/shell/start-sgp-flyway.sh
+expect "*Successfully applied*"
 
-spawn docker-compose -f docker-compose.testes.mssql.yml up --build -d 
-expect "*done*"
-# interact
+spawn ./scripts/shell/start-mssql.sh
+expect "*SQLSERVER FINALIZADO*"
 
-# docker-compose -f docker-compose.testes.postgres.yml up --quiet-pull
+spawn ./scripts/shell/start-sgp-worker-rabbit.sh
+expect "*Application started. Press Ctrl+C to shut down*"
 
-# expect "*system is ready to accept connections"
+spawn ./scripts/shell/start-sgp-worker-service.sh
+expect "*Application started. Press Ctrl+C to shut down*"
+
+spawn ./scripts/shell/start-api-eol-worker.sh
+expect "*Application started. Press Ctrl+C to shut down*"
+
+spawn ./scripts/shell/start-api-eol.sh
+expect "*Application started. Press Ctrl+C to shut down*"
+
+spawn ./scripts/shell/start-sgp-api.sh
+expect "*Application started. Press Ctrl+C to shut down*"
+
+spawn ./scripts/shell/start-sgp-webclient.sh
+expect "*URL_SONDAGEM*"
 
 # INTERACT
