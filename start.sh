@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 if $ACESSO_EXTERNO; 
 then
     export SGP_URL=http://localhost:5000/api

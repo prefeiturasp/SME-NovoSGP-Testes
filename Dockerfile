@@ -1,4 +1,4 @@
-FROM ubuntu:21.10
+FROM ubuntu:20.04
 
 ENV REGISTRY_URL=url
 ENV REGISTRY_USER=user
