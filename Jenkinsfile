@@ -23,7 +23,8 @@ pipeline {
 			  sh('mv $resource testes/scripts/Resource.robot')
                           sh('mv $filter testes/scripts/FiltroTurma.robot')
 			  sh('docker run --rm -v $(pwd)/testes/scripts:/opt/robotframework/tests -v $(pwd)/testes/resultados:/opt/robotframework/reports -e BROWSER=firefox -e TZ=America/Sao_Paulo ppodgorsek/robot-framework:latest')
-				}
+			  sh('rm -f testes/scripts/Resource.robot')
+                          sh('rm -f testes/scripts/FiltroTurma.robot')					}
                 }
             }           
         }   
