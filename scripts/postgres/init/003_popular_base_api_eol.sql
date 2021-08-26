@@ -3845,3 +3845,32 @@ insert into public.rf_servidor(CODIGO_RF, codigo_servidor) values
 ('7217684',189115),
 ('7942630',231855),
 ('7252684',196820);
+
+INSERT INTO public.grupofuncoesatividades
+(idgrupo, cdtipofuncaoatividade)
+VALUES(36, 1);
+INSERT INTO public.grupofuncoesatividades
+(idgrupo, cdtipofuncaoatividade)
+VALUES(3, 6);
+INSERT INTO public.grupofuncoesatividades
+(idgrupo, cdtipofuncaoatividade)
+VALUES(35, 14);
+INSERT INTO public.grupofuncoesatividades
+(idgrupo, cdtipofuncaoatividade)
+VALUES(16, 29);
+INSERT INTO public.grupofuncoesatividades
+(idgrupo, cdtipofuncaoatividade)
+VALUES(4, 30);
+INSERT INTO public.grupofuncoesatividades
+(idgrupo, cdtipofuncaoatividade)
+VALUES(34, 36);
+INSERT INTO public.grupofuncoesatividades
+(idgrupo, cdtipofuncaoatividade)
+VALUES(5, 1042);
+INSERT INTO public.grupofuncoesatividades
+(idgrupo, cdtipofuncaoatividade)
+VALUES(5, 1044);
+INSERT INTO public.grupofuncoesatividades
+(idgrupo, cdtipofuncaoatividade)
+VALUES(5, 1045);
+

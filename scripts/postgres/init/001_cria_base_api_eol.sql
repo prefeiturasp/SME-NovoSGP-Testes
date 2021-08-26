@@ -218,7 +218,19 @@ CREATE TABLE public.grupocargos (
 	CONSTRAINT grupocargos_grupos_fk FOREIGN KEY (idgrupo) REFERENCES grupos(id)
 );
 
+CREATE TABLE public.grupofuncoesatividades (
+	id int8 NOT NULL GENERATED ALWAYS AS IDENTITY,
+	idgrupo int8 NOT NULL,
+	cdtipofuncaoatividade int4 NULL,
+	CONSTRAINT grupofuncoesatividades_pk PRIMARY KEY (id)
+);
+CREATE INDEX grupofuncoesatividades_cdtipofuncaoatividade_idx ON public.grupofuncoesatividades USING btree (cdtipofuncaoatividade);
+CREATE INDEX grupofuncoesatividades_grupo_idx ON public.grupofuncoesatividades USING btree (idgrupo);
 
+
+-- public.grupofuncoesatividades foreign keys
+
+ALTER TABLE public.grupofuncoesatividades ADD CONSTRAINT grupofuncoesatividades_grupo_fk FOREIGN KEY (idgrupo) REFERENCES public.grupos(id);
 
 CREATE OR REPLACE FUNCTION public.uuid_generate_v1()
  RETURNS uuid
@@ -289,3 +301,4 @@ CREATE OR REPLACE FUNCTION public.uuid_ns_x500()
  IMMUTABLE PARALLEL SAFE STRICT
 AS '$libdir/uuid-ossp', $function$uuid_ns_x500$function$
 ;
+

@@ -62,3 +62,10 @@ insert into usuario (rf_codigo, criado_em, criado_rf, criado_por, login, nome) v
 
 /* Perfil de ADM COTIC */
 insert into usuario (rf_codigo, criado_em, criado_rf, criado_por, login, nome) values ('1111161',now(), '0','Sistema','1111161','Usuario 1111161');
+
+
+/* Abrangência */
+insert into abrangencia (usuario_id, dre_id, ue_id, turma_id, perfil, historico, dt_fim_vinculo) values((select id from usuario where rf_codigo = '1111160'),1,null,null,'5ae1e074-37d6-e911-abd6-f81654fe895d',false,null);
+insert into abrangencia (usuario_id, dre_id, ue_id, turma_id, perfil, historico, dt_fim_vinculo) values((select id from usuario where rf_codigo = '1111160'),2,null,null,'5ae1e074-37d6-e911-abd6-f81654fe895d',false,null);
+insert into abrangencia (usuario_id, dre_id, ue_id, turma_id, perfil, historico, dt_fim_vinculo) values((select id from usuario where rf_codigo = '1111160'),3,null,null,'5ae1e074-37d6-e911-abd6-f81654fe895d',false,null);
+insert into abrangencia (usuario_id, dre_id, ue_id, turma_id, perfil, historico, dt_fim_vinculo) values((select id from usuario where rf_codigo = '1111160'),4,null,null,'5ae1e074-37d6-e911-abd6-f81654fe895d',false,null);
